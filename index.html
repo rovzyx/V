@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Will you be my Valentine?</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      background: radial-gradient(circle at top, #ff9a9e, #fecfef, #f6d5f7);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #2b0b24;
+      text-align: center;
+    }
+    .card {
+      background: rgba(255,255,255,0.9);
+      padding: 24px 20px;
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+      max-width: 360px;
+    }
+    h1 {
+      font-size: 1.6rem;
+      margin-bottom: 8px;
+    }
+    p {
+      margin: 6px 0;
+    }
+    .buttons {
+      margin-top: 18px;
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+    .yes {
+      background: #ff6b9c;
+      color: white;
+      box-shadow: 0 6px 14px rgba(255,107,156,0.5);
+    }
+    .yes:hover {
+      transform: translateY(-1px) scale(1.03);
+    }
+    .no {
+      background: white;
+      color: #ff6b9c;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    }
+    .no:hover {
+      transform: translateY(-1px);
+    }
+    .hearts {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: -1;
+    }
+    .heart {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      background: #ff6b9c;
+      transform: rotate(-45deg);
+      animation: float 5s linear infinite;
+      opacity: 0.8;
+    }
+    .heart::before,
+    .heart::after {
+      content: "";
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      background: #ff6b9c;
+      border-radius: 50%;
+    }
+    .heart::before { top: -7px; left: 0; }
+    .heart::after  { left: 7px; top: 0; }
+
+    @keyframes float {
+      0% { transform: translateY(0) rotate(-45deg); opacity: 0; }
+      10% { opacity: 0.9; }
+      100% { transform: translateY(-120vh) rotate(-45deg); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="hearts" id="hearts"></div>
+
+  <div class="card" id="card">
+    <h1>Hey, <span id="name">love</span> 💌</h1>
+    <p>I like you a <strong>lot</strong>.</p>
+    <p>Will you be my Valentine on February 14th?</p>
+
+    <div class="buttons">
+      <button class="yes" id="yesBtn">Yes 💖</button>
+      <button class="no" id="noBtn">No 🙈</button>
+    </div>
+  </div>
+
+  <script>
+    // Put Babie here
+    document.getElementById("name").textContent = "Babie";
+
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn = document.getElementById("noBtn");
+    const card = document.getElementById("card");
+    const heartsContainer = document.getElementById("hearts");
+
+    // Floating hearts
+    function createHeart() {
+      const heart = document.createElement("div");
+      heart.classList.add("heart");
+      const size = Math.random() * 14 + 10;
+      heart.style.width = size + "px";
+      heart.style.height = size + "px";
+      heart.style.left = Math.random() * 100 + "vw";
+      heart.style.bottom = "-20px";
+      heart.style.animationDuration = Math.random() * 3 + 3 + "s";
+      heartsContainer.appendChild(heart);
+      setTimeout(() => heart.remove(), 6000);
+    }
+    setInterval(createHeart, 400);
+
+    // Make "No" run away
+    let noClickCount = 0;
+    noBtn.addEventListener("mouseover", () => {
+      noClickCount++;
+      const x = Math.random() * 160 - 80;
+      const y = Math.random() * 80 - 40;
+      noBtn.style.transform = `translate(${x}px, ${y}px)`;
+      if (noClickCount > 3) {
+        noBtn.textContent = "Please say yes 😭";
+      }
+    });
+
+    // On Yes
+    yesBtn.addEventListener("click", () => {
+      card.innerHTML = `
+        <h1>Yay!! 💘</h1>
+        <p>You just made my day.</p>
+        <p>I can't wait for our Valentine\u2019s date 🥹</p>
+      `;
+    });
+  </script>
+</body>
+</html>
