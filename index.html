@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <title>Will you be my Valentine?</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Confetti library for the Yes celebration -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
   <style>
     body {
       margin: 0;
@@ -16,34 +18,38 @@
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: #2b0b24;
       text-align: center;
+      font-size: 18px;
     }
     .card {
       background: rgba(255,255,255,0.9);
-      padding: 24px 20px;
-      border-radius: 18px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.12);
-      max-width: 360px;
+      padding: 28px 24px;
+      border-radius: 22px;
+      box-shadow: 0 14px 36px rgba(0,0,0,0.14);
+      max-width: 420px;
+      transition: transform 0.3s ease;
     }
     h1 {
-      font-size: 1.6rem;
-      margin-bottom: 8px;
+      font-size: 2rem;
+      margin-bottom: 10px;
     }
     p {
-      margin: 6px 0;
+      margin: 8px 0;
+      font-size: 1.05rem;
     }
     .buttons {
-      margin-top: 18px;
+      margin-top: 22px;
       display: flex;
-      gap: 12px;
+      gap: 16px;
       justify-content: center;
     }
     button {
       border: none;
       border-radius: 999px;
-      padding: 10px 20px;
-      font-size: 1rem;
+      padding: 12px 26px;
+      font-size: 1.05rem;
       cursor: pointer;
       transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+      position: relative;
     }
     .yes {
       background: #ff6b9c;
@@ -51,7 +57,8 @@
       box-shadow: 0 6px 14px rgba(255,107,156,0.5);
     }
     .yes:hover {
-      transform: translateY(-1px) scale(1.03);
+      transform: translateY(-1px) scale(1.05);
+      box-shadow: 0 0 18px rgba(255,107,156,0.7);
     }
     .no {
       background: white;
@@ -60,6 +67,7 @@
     }
     .no:hover {
       transform: translateY(-1px);
+      box-shadow: 0 0 12px rgba(255,107,156,0.4);
     }
     .hearts {
       position: fixed;
@@ -70,8 +78,8 @@
     }
     .heart {
       position: absolute;
-      width: 14px;
-      height: 14px;
+      width: 16px;
+      height: 16px;
       background: #ff6b9c;
       transform: rotate(-45deg);
       animation: float 5s linear infinite;
@@ -81,18 +89,93 @@
     .heart::after {
       content: "";
       position: absolute;
-      width: 14px;
-      height: 14px;
+      width: 16px;
+      height: 16px;
       background: #ff6b9c;
       border-radius: 50%;
     }
-    .heart::before { top: -7px; left: 0; }
-    .heart::after  { left: 7px; top: 0; }
+    .heart::before { top: -8px; left: 0; }
+    .heart::after  { left: 8px; top: 0; }
 
     @keyframes float {
       0% { transform: translateY(0) rotate(-45deg); opacity: 0; }
       10% { opacity: 0.9; }
       100% { transform: translateY(-120vh) rotate(-45deg); opacity: 0; }
+    }
+
+    /* Slideshow image styling */
+    .slideshow-img {
+      width: 210px;
+      height: 210px;
+      object-fit: cover;
+      border-radius: 28px;
+      margin-bottom: 14px;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.2);
+      transition: opacity 0.6s ease;
+      position: relative;
+    }
+
+    /* Floating heart reaction on photo click */
+    .floating-heart {
+      position: absolute;
+      font-size: 1.9rem;
+      pointer-events: none;
+      animation: floatUp 1s ease-out forwards;
+    }
+    @keyframes floatUp {
+      0% { transform: translate(-50%, 0); opacity: 1; }
+      100% { transform: translate(-50%, -40px); opacity: 0; }
+    }
+
+    /* Notes box */
+    .notes-container {
+      margin-top: 24px;
+      padding: 14px 14px 10px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.85);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+      font-size: 0.98rem;
+    }
+    .notes-title {
+      font-weight: 600;
+      margin-bottom: 6px;
+      font-size: 1rem;
+    }
+    .note-text {
+      margin: 6px 0 10px;
+    }
+    .notes-nav {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    .notes-nav button {
+      padding: 6px 14px;
+      font-size: 0.9rem;
+      border-radius: 999px;
+      background: #ffd1e1;
+      color: #2b0b24;
+      box-shadow: none;
+    }
+    .notes-nav button:hover {
+      background: #ffb5d2;
+      transform: translateY(-1px);
+    }
+    .notes-index {
+      font-size: 0.8rem;
+      opacity: 0.7;
+      margin-top: 4px;
+    }
+
+    /* Yes celebration pop */
+    .yes-celebrate {
+      animation: pop 0.5s ease forwards;
+    }
+    @keyframes pop {
+      0% { transform: scale(1); }
+      60% { transform: scale(1.05); }
+      100% { transform: scale(1); }
     }
   </style>
 </head>
@@ -100,15 +183,43 @@
   <div class="hearts" id="hearts"></div>
 
   <div class="card" id="card">
+    <!-- This one <img> will change source to loop through your photos -->
+    <img
+      id="slideshow"
+      class="slideshow-img"
+      src="us/IMG_0255.JPG"
+      alt="Us"
+    />
+
     <h1>Hey, <span id="name">love</span> 💌</h1>
-    <p>I like you a <strong>lot</strong>.</p>
-    <p>Will you be my Valentine on February 14th?</p>
+    <p>From Toronto walks to cozy nights in, you’ve become my favorite person.</p>
+    <p>So I have a very important question for you...</p>
+    <p style="margin-top: 8px; font-weight: 600;">
+      Will you be my Valentine on February 14th?
+    </p>
+
+    <!-- Countdown line -->
+    <p id="countdown" style="font-size: 0.9rem; opacity: 0.7;"></p>
 
     <div class="buttons">
       <button class="yes" id="yesBtn">Yes 💖</button>
       <button class="no" id="noBtn">No 🙈</button>
     </div>
+
+    <!-- Love notes section -->
+    <div class="notes-container">
+      <div class="notes-title">Little notes from me to you ✨</div>
+      <div id="noteText" class="note-text"></div>
+      <div class="notes-nav">
+        <button id="prevNoteBtn">Back</button>
+        <button id="nextNoteBtn">Next</button>
+      </div>
+      <div id="notesIndex" class="notes-index"></div>
+    </div>
   </div>
+
+  <!-- Background music: put a real MP3 URL below -->
+  <audio id="bgMusic" src="us/wave_to_earth_-_love._(lyrics)_128k.mp3" loop></audio>
 
   <script>
     // Put Babie here
@@ -118,12 +229,77 @@
     const noBtn = document.getElementById("noBtn");
     const card = document.getElementById("card");
     const heartsContainer = document.getElementById("hearts");
+    const music = document.getElementById("bgMusic");
 
-    // Floating hearts
+    // ===== Slideshow logic =====
+    const photoUrls = [
+      "us/IMG_0255.JPG",
+      "us/IMG_0649.JPG",
+      "us/IMG_2737.JPG",
+      "us/IMG_5680.JPG",
+      "us/IMG_5720.JPG",
+      "us/IMG_5799.JPG",
+      "us/IMG_5937.JPG",
+      "us/IMG_7408.JPG",
+      "us/Screenshot 2026-02-07 180715.png"
+    ];
+
+    const slideshowImg = document.getElementById("slideshow");
+    let currentPhotoIndex = 0;
+
+    function showNextPhoto() {
+      currentPhotoIndex = (currentPhotoIndex + 1) % photoUrls.length;
+      slideshowImg.style.opacity = 0;
+      setTimeout(() => {
+        slideshowImg.src = photoUrls[currentPhotoIndex];
+        slideshowImg.style.opacity = 1;
+      }, 300);
+    }
+
+    if (photoUrls.length > 1) {
+      setInterval(showNextPhoto, 3000);
+    }
+
+    // ===== Photo click reactions (floating hearts) =====
+    slideshowImg.addEventListener("click", () => {
+      const heart = document.createElement("div");
+      heart.className = "floating-heart";
+      heart.textContent = "💗";
+      // center in the image
+      heart.style.left = "50%";
+      heart.style.top = "50%";
+      slideshowImg.parentElement.style.position = "relative";
+      slideshowImg.parentElement.appendChild(heart);
+      setTimeout(() => heart.remove(), 1000);
+    });
+
+    // ===== Countdown to Valentine’s =====
+    const countdownEl = document.getElementById("countdown");
+    const target = new Date("2026-02-14T00:00:00");
+
+    function updateCountdown() {
+      const now = new Date();
+      const diff = target - now;
+      const days = Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+      countdownEl.textContent = days === 0
+        ? "It’s Valentine’s Day today 💖"
+        : days + " day" + (days === 1 ? "" : "s") + " until our Valentine’s date.";
+    }
+    updateCountdown();
+
+    // ===== Background music (autoplay-safe) =====
+    document.body.addEventListener("click", () => {
+      if (music && music.paused) {
+        music.volume = 0.05;
+        music.play().catch(() => {});
+      }
+    }, { once: true }); // [web:101][web:111]
+
+    // ===== Floating hearts background =====
     function createHeart() {
       const heart = document.createElement("div");
       heart.classList.add("heart");
-      const size = Math.random() * 14 + 10;
+      const size = Math.random() * 16 + 10;
       heart.style.width = size + "px";
       heart.style.height = size + "px";
       heart.style.left = Math.random() * 100 + "vw";
@@ -134,25 +310,66 @@
     }
     setInterval(createHeart, 400);
 
-    // Make "No" run away
+    // ===== Love notes logic (click through boxes) =====
+    const notes = [
+      "Note 1: x",
+      "Note 2: x",
+      "Note 3: x",
+      "Note 4: x.",
+      "Note 5: x."
+    ];
+
+    let currentNoteIndex = 0;
+    const noteTextEl = document.getElementById("noteText");
+    const notesIndexEl = document.getElementById("notesIndex");
+    const prevNoteBtn = document.getElementById("prevNoteBtn");
+    const nextNoteBtn = document.getElementById("nextNoteBtn");
+
+    function renderNote() {
+      noteTextEl.textContent = notes[currentNoteIndex];
+      notesIndexEl.textContent = (currentNoteIndex + 1) + " / " + notes.length;
+    }
+
+    prevNoteBtn.addEventListener("click", () => {
+      currentNoteIndex = (currentNoteIndex - 1 + notes.length) % notes.length;
+      renderNote();
+    });
+
+    nextNoteBtn.addEventListener("click", () => {
+      currentNoteIndex = (currentNoteIndex + 1) % notes.length;
+      renderNote();
+    });
+
+    // Initialize first note
+    renderNote(); // [web:133][web:139]
+
+    // ===== Make "No" run away =====
     let noClickCount = 0;
     noBtn.addEventListener("mouseover", () => {
       noClickCount++;
-      const x = Math.random() * 160 - 80;
-      const y = Math.random() * 80 - 40;
+      const x = Math.random() * 180 - 90;
+      const y = Math.random() * 90 - 45;
       noBtn.style.transform = `translate(${x}px, ${y}px)`;
       if (noClickCount > 3) {
         noBtn.textContent = "Please say yes 😭";
       }
     });
 
-    // On Yes
+    // ===== On Yes =====
     yesBtn.addEventListener("click", () => {
+      card.classList.add("yes-celebrate");
       card.innerHTML = `
         <h1>Yay!! 💘</h1>
         <p>I love you so much and can not wait for my Valentines to come.</p>
         <p>We should get you some Molly Tea 🥹</p>
       `;
+      confetti({
+        particleCount: 200,
+        spread: 80,
+        origin: { y: 0.7 },
+        shapes: ["circle"],
+        scalar: 1.2
+      });
     });
   </script>
 </body>
