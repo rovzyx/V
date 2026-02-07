@@ -19,7 +19,33 @@
       color: #2b0b24;
       text-align: center;
       font-size: 18px;
+      overflow-x: hidden;
     }
+
+/* Side banner images */
+.side-banner {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 90vh;      /* VERY big: 90% of viewport height */
+  width: auto;
+  opacity: 0.95;
+  pointer-events: none;
+  z-index: 0;
+  object-fit: cover;
+}
+.side-banner.left {
+  left: -10px;       /* tuck slightly offscreen if needed */
+}
+.side-banner.right {
+  right: -10px;
+}
+@media (max-width: 1000px) {
+  .side-banner {
+    display: none;   /* hide on smaller screens */
+  }
+}
+
     .card {
       background: rgba(255,255,255,0.9);
       padding: 28px 24px;
@@ -27,6 +53,8 @@
       box-shadow: 0 14px 36px rgba(0,0,0,0.14);
       max-width: 420px;
       transition: transform 0.3s ease;
+      position: relative;
+      z-index: 1; /* above side banners */
     }
     h1 {
       font-size: 2rem;
@@ -180,6 +208,10 @@
   </style>
 </head>
 <body>
+  <!-- Side banner images -->
+  <img class="side-banner left" src="us/left-banner.png" alt="Left banner" />
+  <img class="side-banner right" src="us/right-banner.png" alt="Right banner" />
+
   <div class="hearts" id="hearts"></div>
 
   <div class="card" id="card">
@@ -265,7 +297,6 @@
       const heart = document.createElement("div");
       heart.className = "floating-heart";
       heart.textContent = "💗";
-      // center in the image
       heart.style.left = "50%";
       heart.style.top = "50%";
       slideshowImg.parentElement.style.position = "relative";
@@ -283,7 +314,7 @@
       const days = Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
       countdownEl.textContent = days === 0
         ? "It’s Valentine’s Day today 💖"
-        : days + " day" + (days === 1 ? "" : "s") + " until our Valentine’s date.";
+        : days + " day" + (days === 1 ? "" : "s") + " until Valentines.";
     }
     updateCountdown();
 
@@ -312,11 +343,11 @@
 
     // ===== Love notes logic (click through boxes) =====
     const notes = [
-      "Note 1: x",
-      "Note 2: x",
-      "Note 3: x",
-      "Note 4: x.",
-      "Note 5: x."
+      "Note 1: I was so nervous waiting at the airport for you on that first day. I am glad you kissed me :D",
+      "Note 2: Doing things with you is the best and can't wait to do so much more.",
+      "Note 3: I love how weird you are. You're my idiot.",
+      "Note 4: Thank you for always supporting and motivating me, even when I doubt myself.",
+      "Note 5: I’m really, really happy it’s you I get to ask to be my Valentine."
     ];
 
     let currentNoteIndex = 0;
