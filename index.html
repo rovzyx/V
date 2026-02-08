@@ -22,23 +22,22 @@
       overflow-x: hidden;
     }
 
-/* Side banner images */
 .side-banner {
   position: fixed;
   top: 50%;
   transform: translateY(-50%);
-  height: 90vh;      /* VERY big: 90% of viewport height */
-  width: auto;
+  height: 90vh;          /* same height */
+  width: 25vw;           /* give them the same width too */
+  object-fit: cover;     /* crop to fill that box */
   opacity: 0.95;
   pointer-events: none;
   z-index: 0;
-  object-fit: cover;
 }
 .side-banner.left {
-  left: -10px;       /* tuck slightly offscreen if needed */
+  left: 0;
 }
 .side-banner.right {
-  right: -10px;
+  right: 0;
 }
 @media (max-width: 1000px) {
   .side-banner {
@@ -224,7 +223,7 @@
     />
 
     <h1>Hey, <span id="name">love</span> 💌</h1>
-    <p>From Toronto walks to cozy nights in, you’ve become my favorite person.</p>
+    <p>From you coming to Toronto and I to Boston, you’ve become my favorite person.</p>
     <p>So I have a very important question for you...</p>
     <p style="margin-top: 8px; font-weight: 600;">
       Will you be my Valentine on February 14th?
@@ -304,28 +303,6 @@
       setTimeout(() => heart.remove(), 1000);
     });
 
-    // ===== Countdown to Valentine’s =====
-    const countdownEl = document.getElementById("countdown");
-    const target = new Date("2026-02-14T00:00:00");
-
-    function updateCountdown() {
-      const now = new Date();
-      const diff = target - now;
-      const days = Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
-      countdownEl.textContent = days === 0
-        ? "It’s Valentine’s Day today 💖"
-        : days + " day" + (days === 1 ? "" : "s") + " until Valentines.";
-    }
-    updateCountdown();
-
-    // ===== Background music (autoplay-safe) =====
-    document.body.addEventListener("click", () => {
-      if (music && music.paused) {
-        music.volume = 0.05;
-        music.play().catch(() => {});
-      }
-    }, { once: true }); // [web:101][web:111]
-
     // ===== Floating hearts background =====
     function createHeart() {
       const heart = document.createElement("div");
@@ -343,11 +320,11 @@
 
     // ===== Love notes logic (click through boxes) =====
     const notes = [
-      "Note 1: I was so nervous waiting at the airport for you on that first day. I am glad you kissed me :D",
-      "Note 2: Doing things with you is the best and can't wait to do so much more.",
-      "Note 3: I love how weird you are. You're my idiot.",
-      "Note 4: Thank you for always supporting and motivating me, even when I doubt myself.",
-      "Note 5: I’m really, really happy it’s you I get to ask to be my Valentine."
+      "I was so nervous waiting at the airport for you on that first day. I am glad you kissed me :D",
+      "Doing things with you is the best and can't wait to do so much more.",
+      "I love how weird you are. You're my idiot.",
+      "Thank you for always supporting and motivating me even when I doubt myself.",
+      "I’m really, really happy it’s you I get to ask to be my Valentine."
     ];
 
     let currentNoteIndex = 0;
