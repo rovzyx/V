@@ -22,28 +22,28 @@
       overflow-x: hidden;
     }
 
-.side-banner {
-  position: fixed;
-  top: 50%;
-  transform: translateY(-50%);
-  height: 90vh;          /* same height */
-  width: 25vw;           /* give them the same width too */
-  object-fit: cover;     /* crop to fill that box */
-  opacity: 0.95;
-  pointer-events: none;
-  z-index: 0;
-}
-.side-banner.left {
-  left: 0;
-}
-.side-banner.right {
-  right: 0;
-}
-@media (max-width: 1000px) {
-  .side-banner {
-    display: none;   /* hide on smaller screens */
-  }
-}
+    .side-banner {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 90vh;          /* same height */
+      width: 25vw;           /* same width */
+      object-fit: cover;     /* crop to fill that box */
+      opacity: 0.95;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .side-banner.left {
+      left: 0;
+    }
+    .side-banner.right {
+      right: 0;
+    }
+    @media (max-width: 1000px) {
+      .side-banner {
+        display: none;   /* hide on smaller screens */
+      }
+    }
 
     .card {
       background: rgba(255,255,255,0.9);
@@ -224,9 +224,9 @@
 
     <h1>Hey, <span id="name">love</span> 💌</h1>
     <p>From you coming to Toronto and I to Boston, you’ve become my favorite person.</p>
-    <p>So I have a very important question for you...</p>
+    <p>I hope our love for each other will continue to grow and can make lots of money together real soon</p>
     <p style="margin-top: 8px; font-weight: 600;">
-      Will you be my Valentine on February 14th?
+      Will you be my Valentine?
     </p>
 
     <!-- Countdown line -->
@@ -249,7 +249,7 @@
     </div>
   </div>
 
-  <!-- Background music: put a real MP3 URL below -->
+  <!-- Background music -->
   <audio id="bgMusic" src="us/wave_to_earth_-_love._(lyrics)_128k.mp3" loop></audio>
 
   <script>
@@ -303,6 +303,18 @@
       setTimeout(() => heart.remove(), 1000);
     });
 
+    // ===== Background music (play on first click) =====
+    document.body.addEventListener(
+      "click",
+      () => {
+        if (music && music.paused) {
+          music.volume = 0.05;
+          music.play().catch(() => {});
+        }
+      },
+      { once: true }
+    );
+
     // ===== Floating hearts background =====
     function createHeart() {
       const heart = document.createElement("div");
@@ -349,7 +361,7 @@
     });
 
     // Initialize first note
-    renderNote(); // [web:133][web:139]
+    renderNote();
 
     // ===== Make "No" run away =====
     let noClickCount = 0;
